@@ -87,6 +87,10 @@
                 margin-top: 2em;
             }
 
+            section:last-child {
+                margin-bottom: 2em;
+            }
+
             section > * + * {
                 margin-top: 1em;
             }
@@ -272,7 +276,7 @@
                     </li>
 
                     <li>
-                        Lógicas:  Operações  para  manipular  bits  individuais  de  uma  pala vra  ou   outras  unidades  endereçáveis, normalmente  conhecidas  como  “bit  twiddli ng”.  São  baseadas  e m  operações  booleanas.  Algu mas  das operações  lógicas  básicas  são:  NOT(inverte  um  b it),  AND,OR  e  Exclusive  OR  (XOR)  são  as  funções lógicas mais comuns com dois operandos. Equal é um teste binário útil; 
+                        Lógicas:  Operações  para  manipular  bits  individuais  de  uma  pala vra  ou   outras  unidades  endereçáveis, normalmente  conhecidas  como  “bit  twiddling”.  São  baseadas  e m  operações  booleanas.  Algu mas  das operações  lógicas  básicas  são:  NOT(inverte  um  bit),  AND,OR  e  Exclusive  OR  (XOR)  são  as  funções lógicas mais comuns com dois operandos. Equal é um teste binário útil; 
                     </li>
 
                     <li>
@@ -280,7 +284,11 @@
                     </li>
 
                     <li>
-                        Entrada  e  sa ída:  As  instruções  de  entrada  e  s aída,  possuem  diversas  técnicas  que  podem  s er  usadas, incluindo  E/S  programada,  independente,  E/S  programada  mapeada  na  me mória,  DMA  e  o  uso  de  um processador  de  E/S.  Muitas  implementações  ofe recem  a penas  algumas  instruções  de  E/S,  com  ações específicas ditadas por parâmetros, códigos ou palavras de comando. -Controle  de  sistema:  São  aquelas  que  podem  ser  executadas  apenas  e nquanto  o  processador  está  em um  c erto  estado  p rivilegiado  ou  es tá  executando  um  programa   em  uma  área  privilegiada  especial  da memória.  Normalmente,  essas  instruções  são  res ervadas  para  o  uso  do  sistema  operacional.  Alguns exemplos  de  operações  de  controle  são:  Uma  instrução  de  c ontrole  do  sistema  pode  ler  ou  alterar  um registrador  de  controle;  outro  exemplo  é  u ma  instrução  para  ler  ou  modificar  uma  chave  de   proteção  de armazenamento,  c omo  a  que  é  usada  no  sistema  de  memória  do  EAS/390.  Outro  e xemplo  é  o  acesso para processar blocos de controle em um sistema multiprogramado; 
+                        Entrada  e  sa ída:  As  instruções  de  entrada  e  s aída,  possuem  diversas  técnicas  que  podem  s er  usadas, incluindo  E/S  programada,  independente,  E/S  programada  mapeada  na  me mória,  DMA  e  o  uso  de  um processador  de  E/S.  Muitas  implementações  ofe recem  a penas  algumas  instruções  de  E/S,  com  ações específicas ditadas por parâmetros, códigos ou palavras de comando. 
+                    </li>
+                    
+                    <li>
+                        Controle  de  sistema:  São  aquelas  que  podem  ser  executadas  apenas  e nquanto  o  processador  está  em um  c erto  estado  p rivilegiado  ou  es tá  executando  um  programa   em  uma  área  privilegiada  especial  da memória.  Normalmente,  essas  instruções  são  reservadas  para  o  uso  do  sistema  operacional.  Alguns exemplos  de  operações  de  controle  são:  Uma  instrução  de  controle  do  sistema  pode  ler  ou  alterar  um registrador  de  controle;  outro  exemplo  é  u ma  instrução  para  ler  ou  modificar  uma  chave  de   proteção  de armazenamento,  como  a  que  é  usada  no  sistema  de  memória  do  EAS/390.  Outro  exemplo  é  o  acesso para processar blocos de controle em um sistema multiprogramado; 
                     </li>
 
                     <li>
@@ -413,7 +421,7 @@
                     </li>
 
                     <li>
-                        <b>Buffer  de   laço  de  repetição:</b>  Um  buffer  de  laço  de  repetição  é  uma  memória  pequena  e  extremamen te rápida  mantida  pelo estágio  pipeline  de busca  da  instrução e  que  contém  n  instruções  mais  recentemente lidas  na  sequência.  Se  um  desvio  está  para  ser  tomado,  o  hardware  primeiro  verifica  se  o   alvo  do  desvio já está  no buffer.  Se estiver, a próxima instrução é  obtida do buff r. O buffer  de laço de  repetição possui 3 benefícios:
+                        <b>Buffer  de   laço  de  repetição:</b>  Um  buffer  de  laço  de  repetição  é  uma  memória  pequena  e  extremamente rápida  mantida  pelo estágio  pipeline  de busca  da  instrução e  que  contém  n  instruções  mais  recentemente lidas  na  sequência.  Se  um  desvio  está  para  ser  tomado,  o  hardware  primeiro  verifica  se  o   alvo  do  desvio já está  no buffer.  Se estiver, a próxima instrução é  obtida do buffer. O buffer  de laço de  repetição possui 3 benefícios:
 
                         <ul>
                             <li>
@@ -455,35 +463,110 @@
                         </ul>
                     </li>
                 </ul>
-                    
-                    
-                    
-                    
-                    
             </section>
             <section>
                 <h2>10 – Explique Superpipeline.</h2>
+                <p>O  superpipeline  explora  o  fato  de  que  muitos  estágios  de  pipeline  executam  tarefas  que requerem  menos  do  que  a  metade  de  um  ciclo  de  clock.  Assim,  a  velocidade  interna  de  clock  dobrada possibilita  o  desempenho  de  duas  tarefas  de  um  ciclo  de  clock  externo.  O  controle  assíncrono  do processador é uma dificuldade do superpipeline.</p>
             </section>
             <section>
                 <h2>11 – Explique Superescalar.</h2>
+                <p>Superescalar  é  aquele  em  que  múltiplos  e  independentes  pipelines  de  instruções  são  usados. Cada  pipeline  consiste  de  múltiplos  estágios,  de  tal  forma  que  cada  pipeline  possa   lidar  com   múltiplas instruções  ao  mesmo  tempo.  Os  pipelines  múltiplos  introduzem  um  nível  de  paralelismo,  possibilitando que múltiplos fluxos de instruções sejam processados ao mesmo tempo.</p>
             </section>
             <section>
                 <h2>12 – Explique as limitações de um sistema Superescalar.</h2>
+                <p>A abordagem superescalar depende da habilidade de executar várias instruções em paralelo.O termo paralelismo em nível de instruções diz respeito ao nível no qual as instruções de um programa podem ser executadas de forma paralela (em média).Aumento da complexidade e problemas de dependências e desvios.</p> 
+                
+                <ul>
+                    <li>
+                        Dependência  de  dados  verdadeira:  A  segunda  i nstrução  pode  ser  obtida  e  decodificada,  mas  não  pode ser  executada  até  que  a  primeira  execute.  O  motivo  é  que  a  segunda  instrução  precisa  de  dados produzidas pela primeira. 
+                    </li>
+
+                    <li>
+                        Dependências  procedurais:  As  instruções  que  vem  depois  de  um  desvio  (tomado  ou  não)  possuem  uma dependencia  procedural  com  o  desvio  e  não  podem  ser  executadas   até  que  o  desvio  seja  executado. Uma oportunidade de magnitude maior é perdida com cada atraso. 
+                    </li>
+
+                    <li>
+                        Conflito de  recursos:  Um conflito  de recursos  é  uma competição de  duas ou  mais  instruções pelo  mesmo recurso e ao mesmo tempo.
+                    </li>
+
+                    <li>
+                        Dependência de saída: dependência de escrita após escrita (WAW , write after write) 
+                    </li>
+
+                    <li>
+                        Antidependência: dependência de ler após escrever (RAW , read after write)
+                    </li>
+                </ul>
             </section>
             <section>
                 <h2>
                     13 – Explique as possibilidades para Multiprocessadores
                     Simétricos.
                 </h2>
+
+                <p>Multiprocessadores  simétricos  ou  SMP,  do  inglês  symmetric  multiprocessor,  têm  vantagens potenciais  sobre  processadores  de  arquitetura  uniprocessador,  como  desempenho,  disponibilidade, crescimento  incremental  e  personalização  do  fornecimento.  Um  SMP  consiste  de  vários  processadores semelhantes  dentro  de  um  mesmo  computador,  interconectados  por  um  barramento  ou  algum  tipo  de arranjo de  computação.</p> 
+                
+                <p>O  problema  mais crítico  à ser  resolvido em  um SMP é  a coerência   de cache.  Cada processador  possui  a   sua  própria  cache  e  assim  é  possível  que  uma  determinada  informação  esteja presente em mais  de  uma  delas.  Se tal informação  for  alterada em  uma  cache,  então  a memória  principal e  a  outra  cache  possuem  uma  versão  inválida  dessa  informação.</p>  
+                
+                <p>Os  protocolos  de  coerência  de  cache são  projetados  para  lidar  com  esse  problema.  Quando  mais  de  um  processador  é  implementado  em  um chip  único,  a  configuração  é  conhecida  como  chip  de  multiprocessamento.</p>
+                
+                <p>Um  esquema  de  projeto relacionado  é  replicar  alguns  dos  componentes  de  um  único  processador  para  que  o  processador  possa executar  vária s  threads  de  forma  concorrente;  isto  é  conhecido  como  um  processador  mutithread.</p>
+                
+                <p>Um cluster  é  um  grupo  de  computadores  completo  conectados  trabalhando  juntos  como  um  recurso computacional  unificado  que  pode  criar  a  ilusão  de  ser  apenas  uma  máquina.</p> 
+                
+                <p>O  termo  computador completo  significa  um  sistema  que  pode  funcionar  por  conta  própria,  separado  do   cluster.  Um  sistema NUMA  é  um multiprocessador  de  memória  com partilhada  em  que  o  tempo  de  acesso  para  determinado processador  a  uma  palavra  na  memória  varia  de  acordo  com  a  posição  da  palavra  na  m emória. A classificação de sua organização é:</p>
+                
+                <ul>
+                    <li>
+                        tempo compartilhado ou barramento  comum,
+                    </li>
+
+                    <li>
+                        memórias com  múltiplas portas 
+                    </li>
+
+                    <li>
+                        e unidade de controle central.
+                    </li>
+                </ul>
             </section>
             <section>
                 <h2>14 – Explique a Lei de Pollack.</h2>
+                <p> O  aumento  d e  desempenho  do  microprocessador,  devido  aos  avanços  da  microarquitetura  é aproximadamente  proporcional  à  raiz  quadrada  do  aumento  de  sua  complexidade  (lógica  do processador).</p>
             </section>
             <section>
                 <h2>
                     15 – Explique a organização Multicore para os Principais
                     Processadores.
                 </h2>
+
+                <p> No  nível  mais  alto  d a  descrição,  as  principais  variáveis  um  uma  organização  multicore  são  as seguintes:</p>
+
+                <ul>
+                    <li>Números de núcleos processadores no chip.</li>
+                    <li>Números de níveis da memória cache</li>
+                    <li>Quantidade de memória cache que é compartilhada</li>
+                </ul>
+
+                <h3>Intel Core Duo</h3>
+                <p> Foi  i ntroduzido  em  2006,  implementa  dois  proc essadores  x86  supere scalares   com  uma cache  L2  compartilhada.  Como  é  comum  em  sistemas  multicore  cada  nú cleo  tem  a  su a  cache  L1 dedicada.  Neste  caso,  cada  núcleo  te m  um a  cache  de  instruções  d e  32KB  e  uma  c ache  de  dados  de  32 KB.  Cada  nú cleo  tem  uma  un idade  de  controle  té rmica.  Com  a  d ensidade  maior  de  chi ps  atuais,  o gerenciamento  térmico  é  uma  c apacidade  fundamental,  especialmente  para  laptops  e  sistemas  móveis.   A  unidade  de  controle   térmico  de  CORE  DUO  é  proj etada  para  gerenciar  a   d issipação  de  c alor  d o  chip para maximizar o desempenho de ntro das restrições térmicas, o que melhora também a ergonomia para o sistema  de  esfriamento  e  m enor  barulho  acústico  do  ventilador.  Ele  monitora  sensores  digitais  de  a lta precisão  para  m edição  de  temperatura  de  alta  precisão.  Cada  núcleo  é  uma  zona  térmica  independente. Se  a  temperatura  exceder  o limite  em  um  núcleo,  a  unidade  térmica  reduz a  ta xa de  clock  para  diminuir a geração  de  calor.</p>
+
+                <p>O  próximo  elemento  deste  processador  é  o  co ntrolador  programável  avançado  de interrupção  (APIC  –  advanced  programmable  interrupt  controler,  q ue  desempenha  uma  série  de  funções, como  o  provimento  de  interrupções entre  processadores, q  pe rmite  que  qualquer  processador  inte rroupar qualquer  outro  processador  ou  conjunto  de   processadores,  aceita  interrupções  de   E/S  e  enc aminha-as para  o  núcleo  adequado, c ada APIC  inclui  um  temporizador,  o  qual  pode s er aj ustado pelo  SO  para  gerar uma interrupção no núcleo local.</p>
+
+                <p>A  lógica  de  gerenciamento  de  energia  é  responsável  por  reduzir  o  consumo  de  energia  quando  possível. Monitora as condições  térmicas  e atividade da  CPU  e ajusta  os níveis  de  voltagem  e consumo  de energia de  acordo.  O  Chip  CORE  DUO  inclui  uma  cache  L2  de  2MB  compartilhada,  onde  sua  lógica  permite alocação  dinâmica  do  espaço  da  cache  com  base  nas  necessidades  atuais  do  núcleo  de  tal  forma  que um  núcleo  pode  ser  atribuído  até  100%  da  cache  L2.  A  cache  L2  possui  lógica  para  suportar  o protocolo  MESI  para  caches  L1  anexadas.  O  principal  ponto  a  ser  considerado  é  quando  uma  escrita  é feita em nível L1.</p>
+
+                <p>A  interface  de  barramento  conecta-se  com  o  barramento   externo,  conhecido  como  barramento  frontal, qual se conecta com a memória principal, controladores de E/S e outros chips processadores.</p>
+
+                <h3>Intel Core I7</h3>
+                <p>Foi introduzido em novembro de 200 8, implementa 4 processador es x86 SMT, cada um  com uma ache L2 dedicada e com uma cache L3 compartilhada.</p>
+
+                <p>Cada  núcleo  tem  sua  cache  L2  dedicada  e  quatro  núcleos  compartilham  a  cache  L3  de  8MB.  Um mecanismo  que  a  Intel  usa  para  tornar  suas  caches  mais  eficientes  é  a  pré-busca,  onde  o  hardware analisa padrões  de acesso  a memória  e tenta preencher as caches de forma especulativa com  dados que provavelmente  serão  resquisitados  logo.  O  chip  CORE  I7   suporta  duas  formas  de  comunicação  externa com outros chips:</p>
+
+                <ul>
+                    <li>O control ador de  memória DDR3:  tra z o c ontrolador d e memória  para memória  principal  DDR para o  chip. A  i nterface  suporta  três  canais  c om  ta manho  de  8  bytes  para  um  barramento  total  de  192  bi ts,  pa ra  uma taxa  de  dados  agregada  de  32GB/s.  Com  o  controlador  de   memória  no  chip,  o  barrament o  frontal  é eliminado.</li>
+
+                    <li>O  caminho  de  interterconexão  rápida  (QPI  –  quick-path  interconnect)  é  u ma  especificação  de interconexão  elétrica  ponto  a  p onto,  com  coerência  de  cache  pa ra  processadores  e  chipsets  da   Intel.  Ele possibilita comunicação de alta velocidade entre chips de processadores conectados. A ligação QPI opera a  6,4  GT/s  (transferênci as  por  segundo).  A  16  bi ts  por  transferência,  isso  ati nge  até  12,8  GB/s  e  como ligaçãoes QPI envolvem pares bidirecionais dedicados, a largura de banda total é 25,6GB/s.  </li>
+                </ul>
             </section>
         </article>
     </body>
