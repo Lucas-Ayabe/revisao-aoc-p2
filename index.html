@@ -18,6 +18,7 @@
             html,
             body {
                 font-family: "Poppins", sans-serif;
+                scroll-behavior: smooth;
             }
 
             h1 {
@@ -25,7 +26,7 @@
                 font-family: "Playfair Display", serif;
                 line-height: 1;
                 font-weight: 500;
-                margin-top: .5em;
+                margin-top: 0.5em;
             }
 
             h2 {
@@ -34,7 +35,8 @@
                 line-height: 1;
             }
 
-            h1, h2 {
+            h1,
+            h2 {
                 margin-bottom: 1em;
             }
 
@@ -54,31 +56,54 @@
                 padding-left: 2ch;
             }
 
+            ol {
+                padding-left: 1.125ch;
+            }
+
             ol > li {
                 padding-left: 1ch;
             }
 
             li + li {
-                margin-top: .25em;
+                margin-top: 0.25em;
             }
 
-            ul+ p, li + p {
+            ul + p,
+            li + p {
                 margin-top: 1em;
                 margin-bottom: 1em;
             }
 
-            p, span, li {
+            dt {
+                font-weight: 600;
+            }
+
+            dt::before {
+                content: "- ";
+            }
+
+            dd {
+                padding-left: 1.25ch;
+            }
+
+            dd + dt {
+                margin-top: 1em;
+            }
+
+            p,
+            span,
+            li {
                 line-height: 1.5;
             }
 
             section {
-                border: 1px solid rgba(0, 0, 0, .2);
                 padding: 10px;
                 border-radius: 4px;
             }
 
             @media screen and (min-width: 600px) {
                 section {
+                    border: 1px solid rgba(0, 0, 0, 0.2);
                     padding: 25px;
                 }
             }
@@ -101,10 +126,17 @@
 
             .container {
                 max-width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
                 margin-left: auto;
                 margin-right: auto;
+            }
+
+            .section {
+                padding: 0;
+                border: none;
+            }
+
+            code {
+                font-size: 1.25em;
             }
 
             @media screen and (min-width: 768px) {
@@ -131,442 +163,748 @@
     <body>
         <article class="container">
             <h1>Revisão para a P2 de AOC</h1>
-            
-            <section>
-                <h2>1 – Explique Set de Instruções, com seus elementos.</h2>
-                <p>
-                    É a coleção de diferentes instruções que o processador pode
-                    executar. Seus elementos são:
-                </p>
 
-                <ul>
-                    <li>
-                        <b>Op code (código de operação):</b> Especifica a operação à ser realizado;
-                    </li>
-                    <li>
-                        <b>Referência à operando fonte:</b> A operação pode envolver um ou mais operandos fontes, ou seja, operandos que são entradas para operação;
-                    </li>
-                    <li>
-                        <b>Referência à operando destino:</b> A operação pode produzir um resultado;
-                    </li>
-                    <li>
-                        <b>Referência à próxima instrução:</b> Diz ao processador onde buscar a próxima instrução após o término da instrução em execução.</li>
-                    </li>
-                </ul>
+            <section id="conceitos" class="section">
+                <h2>Conceitos</h2>
+                <a href="#respostas">Pular para as respostas</a>
+
+                <section>
+                    <h2>Set de instruções</h2>
+                    <p>
+                        É o conjunto de instruções de máquina entendidos pela
+                        CPU. Usualmente:
+                    </p>
+
+                    <ul>
+                        <li>Código de máquina</li>
+                        <li>Código binário</li>
+                        <li>Representado por códigos assembly</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Elementos de um set de instruções</h2>
+                    <dl>
+                        <dt>Op code: Código da operação</dt>
+                        <dd>
+                            Que operação irá ser feita. Ex:
+                            <code><b>add</b> $t0, $t1</code>
+                        </dd>
+
+                        <dt>Referencia da fonte do operando</dt>
+                        <dd>
+                            É o código de onde está os operandos da operação.
+                            Ex: <code>add $t0, <b>$t1</b></code>
+                        </dd>
+
+                        <dt>Referencia do operando do resultado</dt>
+                        <dd>
+                            É o código de onde o resultado da operação irá ser
+                            guardado. Ex: <code>add <b>$t0</b>, $t1</code>
+                        </dd>
+
+                        <dt>Referencia para a próxima instrução</dt>
+                        <dd>
+                            É o código de onde está a próxima instrução a ser
+                            executada, porém no caso do assembly MIPS utilizado
+                            nos exemplos acima, esse controle é feito
+                            automáticamente, então só veriamos isso em outro
+                            assembly.
+                        </dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h2>
+                        Onde os resultados dessas operações são armazenados?
+                    </h2>
+
+                    <ul>
+                        <li>
+                            Podem ser manipulados internamente só com os
+                            registradores
+                        </li>
+                        <li>Memória principal (RAM ou cache)</li>
+                        <li>Dispositivos de I/O (entrada e saída)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Processo de execução de uma instrução</h2>
+
+                    <ol>
+                        <li>
+                            <b>Instruction address calculation: </b> O endereço
+                            de uma instrução é armazenado no contador de
+                            programas (PC).
+                        </li>
+
+                        <li>
+                            <b>Instruction fetch: </b>Então se busca a
+                            instrução.
+                        </li>
+
+                        <li>
+                            <b>Instruction operation decoding</b>> Ela é
+                            decodificada
+                        </li>
+
+                        <li>
+                            <b>Operand address calculation: </b> Verifica os
+                            endereços dos dados(operandos da operação).
+                        </li>
+
+                        <li>
+                            <b>Operand fetch: </b>Busca pelos operandos
+                            verificados no passo anterior.
+                        </li>
+
+                        <li><b>Data operation: </b> Realiza a operação.</li>
+
+                        <li>
+                            <b>Operand address calculation: </b> Verifica o
+                            enderço do operando a que vai armazenar o resultado
+                            da operação.
+                        </li>
+
+                        <li>
+                            <b>Operand store: </b>Armazena o resultado no
+                            operando verificado no passo anterior.
+                        </li>
+
+                        <li>
+                            Volta para o <b>passo 1</b> e repete o processo até
+                            a execução finalizar.
+                        </li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2>Representação das instruções</h2>
+                    <ul>
+                        <li>
+                            Em código de máquina cada instrução tem um único
+                            padrão de bit
+                        </li>
+
+                        <li>
+                            Por isso, como nós seres humanos não entendemos
+                            binário num geral, utilizamos uma representação mais
+                            simbólica. Ex: add, sub, load e etc.
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Tipos de instruções</h2>
+
+                    <ul>
+                        <li>
+                            Processamento de dados. Ex:
+                            <code>add, sub, mul, div</code> e etc.
+                        </li>
+
+                        <li>
+                            Armazenamento de dados (Registradores ou memória
+                            principal). Ex: <code>li, la</code> e etc.
+                        </li>
+
+                        <li>
+                            Movimentação de dados (I/O). Ex: pegar dados do
+                            teclado usando <code>syscall</code>
+                        </li>
+
+                        <li>
+                            Controle de fluxo. Ex: <code>beq, j, bgt</code> e
+                            etc.
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Diferenciando os processadores</h2>
+                    <p>
+                        Dependendo do processador, o código assembly pode variar
+                        pela quantidade de endereços que uma instrução aceita.
+                        Ex:
+                    </p>
+
+                    <ul>
+                        <li>1 Op code e 3 endereços</li>
+                        <li>1 Op code e 2 endereços</li>
+                        <li>1 Op code e 1 endereços</li>
+                        <li>
+                            1 Op code e 0 endereços. Este último é experimental
+                            e não é utilizado, tendo que ser executado através
+                            de uma estrutura de pilha.
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>RISC</h2>
+                    <p>
+                        O Reduced Instruction Set Computer é a arquitetura
+                        oposta ao CISC e possui algumas características:
+                    </p>
+
+                    <ul>
+                        <li>Muitos registradores de propósito geral</li>
+                        <li>
+                            Otimizar os registradores através de tecnologia de
+                            compilação
+                        </li>
+                        <li>Conjunto limitado de instruções simples</li>
+                        <li>Mais performático</li>
+                    </ul>
+
+                    <p>
+                        E ele resolvia bem um problema:
+                        <strong>O acesso a memória é lento.</strong>
+                    </p>
+
+                    <p>
+                        Criando vários registradores de uso geral, afinal tinham
+                        muitos transistores disponíveis de qualquer jeito. E
+                        para resolver a lentidão no caso das funções e
+                        procedimentos foi feito o seguinte:
+                    </p>
+
+                    <p>
+                        <b>janelas de processadores: </b>blocos de registradores
+                        com funções de armazenar os parâmetros, armazenar dados
+                        de processamento local, armazenar o parametro de saída.
+                    </p>
+
+                    <p>
+                        Porém isso levou a outro problema,
+                        <strong
+                            >a média de CPI estava se distanciando de 1.</strong
+                        >
+                    </p>
+
+                    <p>
+                        Mas isso foi contornado através de métodos para a
+                        execução paralela de instruções.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>CISC</h2>
+                    <p>
+                        O Complex Instruction Set Computer é a arquitetura
+                        oposta ao RISC e possui algumas características:
+                    </p>
+
+                    <ul>
+                        <li>
+                            Mais Op codes, que abstraiam coisas recorrentes como
+                            operações de exponenciação. O chamado micro-código.
+                        </li>
+                        <li>Mais acessível</li>
+                        <li>Menos registradores</li>
+                        <li>Menos performático</li>
+                    </ul>
+
+                    <p>
+                        E resolvia bem um problema:
+                        <strong
+                            >O computador deve ser acessível as pessoas.</strong
+                        >
+                    </p>
+
+                    <p>
+                        Criando circuitos na CPU que auxiliem o processamento,
+                        consequentemente ao programador.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Híbridos RISC e CISC</h2>
+                    <p>
+                        A Intel percebeu que seguir puramente o CISC fazia com
+                        que fosse muito dificil ganhar desempenho, por isso
+                        adotou algumas características RISC, criando um híbrido
+                        que em geral tem as seguintes características:
+                    </p>
+
+                    <ul>
+                        <li>Muitos registradores</li>
+                        <li>Muito desempenho</li>
+                        <li>Otimização do pipeline</li>
+                        <li>
+                            Uso de técnicas de compilação para converter os
+                            micro-códigos complexos da arquitetura CISC em
+                            códigos simples da arquitetura RISC.
+                        </li>
+                        <li>
+                            Permite extender o conjunto x86 pela característica
+                            acima.
+                        </li>
+                    </ul>
+
+                    <p>
+                        O set de instruções base para todo processador é chamado
+                        x86, que pode ser extendido em vários conjuntos de
+                        micro-código, sendo alguns exemplos:
+                    </p>
+
+                    <ul>
+                        <li>SSE</li>
+                        <li>3D-NOW</li>
+                        <li>SIMD</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Tipos de registradores</h2>
+                    <ul>
+                        <li>Uso geral: Armazenam dados e insturções</li>
+                        <li>Uso específicos: Só Endereços ou só dados</li>
+                    </ul>
+                </section>
             </section>
-            <section>
-                <h2>
-                    2 – Explique a forma que uma instrução pode ser
-                    representada, de acordo com os tipos possíveis de
-                    processador.
-                </h2>
-                <p>No computador cada instrução é representada por uma sequência de bits. A instrução é dividida em campos correspondentes aos elementos constituintes de instrução. Os op codes são representados por abreviações, chamadas mnemônicos, que indicam a operação. Ex:</p>
-                
-                <ul>
-                    <li>
-                        Add: adiciona; 
-                    </li>
-                    <li>
-                        sub: subtrai; 
-                    </li>
-                    <li>
-                        mul: multiplica; 
-                    </li>
-                    <li>
-                        div: divide; 
-                    </li>
-                    <li>
-                        load: carrega; 
-                    </li>
-                    <li>
-                        stor: armazena;
-                    </li>
-                </ul>
-                
-                <h3>Exemplos de instruções para processadores com 3 endereços:</h3> 
-                <p>Operando 1, operando 2, resultado: sub y,a,b</p>
-                
-                <h3>Exemplos de instruções para processadores com 2 endereços:</h3> 
-                <p>Neste caso, um endereço realiza trabalho duplo, como operando e como resultado: a=a+b (move y,a // add y,b)</p>
 
-                <h3>Exemplos de instruções para processadores com 1 endereço:</h3> 
-                <p>Este é o caso mais simples e para que funcione, um segundo endereço precisa ser implícito, sendo este endereço, um registrador do processador, conhecido como acumulador (AC). O acumulador contem um dos operandos e é usado para armazenar o resultado: Load d, mpy e, add c (ac=d, ac=ac*e, ac=ac+c).</p>
-                
-                <h3>Exemplos de instruções para processadores com nenhum endereço:</h3> 
-                <p>Existem também os casos dos processadores com zero endereços para algumas instruções, que se aplicam a uma organização de memória especial, chamada de pilha.</p>
-            </section>
-            <section>
-                <h2>3 – Explique tipo de dados e qual sua relevância.</h2>
-                <p>Tipo de dados é a representação computacional de algo do mundo real, usualmente em linguagens de alto nível temos os tipos primitivos como: </p>
-                <ul>
-                    <li>String(caractere)</li>
-                    <li>Integer(inteiro)</li>
-                    <li>Float(número de ponto flutuante ou real)</li>
-                    <li>Boolean(booleano ou lógico)</li>
-                </ul>
+            <section id=respostas class="section">
+                <h2>Respostas</h2>
+                <p>Aqui se encontram as respostas formatadas, encontradas na internet para as perguntas do arquivo <mark>Revisao_para_P2.txt</mark></p>
 
-                <p>E em assembly podemos ter tipos como: </p>
-                
-                <ul>
-                    <li>Geral: locais de byte, word (16 bits), palavras duplas (32bits), quatro palavras (64 bits) e quatro palavras duplas (128bits) com conteúdo binário arbitrário.</li>
+                <a href="#conceitos">Retornar aos conceitos</a>
+                <section>
+                    <h2>1 – Explique Set de Instruções, com seus elementos.</h2>
+                    <p>
+                        É a coleção de diferentes instruções que o processador pode
+                        executar. Seus elementos são:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <b>Op code (código de operação):</b> Especifica a operação à ser realizado;
+                        </li>
+                        <li>
+                            <b>Referência à operando fonte:</b> A operação pode envolver um ou mais operandos fontes, ou seja, operandos que são entradas para operação;
+                        </li>
+                        <li>
+                            <b>Referência à operando destino:</b> A operação pode produzir um resultado;
+                        </li>
+                        <li>
+                            <b>Referência à próxima instrução:</b> Diz ao processador onde buscar a próxima instrução após o término da instrução em execução.</li>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                        2 – Explique a forma que uma instrução pode ser
+                        representada, de acordo com os tipos possíveis de
+                        processador.
+                    </h2>
+                    <p>No computador cada instrução é representada por uma sequência de bits. A instrução é dividida em campos correspondentes aos elementos constituintes de instrução. Os op codes são representados por abreviações, chamadas mnemônicos, que indicam a operação. Ex:</p>
                     
-                    <li>Números inteiros: Um valor binário com sinal, contido em um byte, palavra ou palavras duplas, usando a representação de complemento a dois. Interpretado como campo de bit ou inteiro;</li>
-
-                    <li>Números ordinais: Um inteiro sem sinal contido em um byte, palavra ou palavras duplas;</li>
+                    <ul>
+                        <li>
+                            Add: adiciona; 
+                        </li>
+                        <li>
+                            sub: subtrai; 
+                        </li>
+                        <li>
+                            mul: multiplica; 
+                        </li>
+                        <li>
+                            div: divide; 
+                        </li>
+                        <li>
+                            load: carrega; 
+                        </li>
+                        <li>
+                            stor: armazena;
+                        </li>
+                    </ul>
                     
-                    <li>Números em BCD (Binary coded decimal) (BCD) não agrupado: uma representação de um dígito BCD no intervalo de 0 a 9, com um dígito em cada byte;</li>
-
-                    <li>Agrupado BCD: Representação de byte agrupado de dois dígitos BCD; valor no intervalo de 0 a 99;</li>
-
-                    <li>Ponteiro near: Um endereço efetivo de 16, 32 ou 64 bits, que representa o deslocamento dentro de um segmento. Usado para todos os ponteiros em uma memória não segmentada e para referências dentro de um segmento em uma memória segmentada.</li>
-
-                    <li>Ponteiro far: são usados para referência à memória em um modelo de memória segmentado, onde a identidade de um segmento sendo acessado precisa ser especificada explicitamente;</li>
-
-                    <li>Campo de bits: Uma sequência contigua de bits, contendo de zero a 232 - 1 bits.</li>
-
-                    <li>Cadeia de bytes: Uma sequência contigua de bytes, palavras ou doublewords, contendo de zero a 232 - 1 bytes.</li>
-
-                    <li>Ponto flutuante: ((Expoente)(significado) - precisão simples: 32 bits, sendo 22 bits para o significado, 8 bits para o expoente e um para o sinal. Precisão dupla: 64 bits, sendo 52 bits para o significado, 11 bits para o expoente e um para o sinal. Ponto flutuante de precisão dupla extendida: 80 bits, sendo 63 bits para o significado, 1 bit indicando bit de inteiro, 16 bits indicando o expoente e 1 bit de sinal.</li>
-
-                    <li>SIMD agrupada (do inglês single instruction , multiple data \u2013 única instrução, múltiplos dados): Tipos de dados de 64 a 128bits.</li>
-                </ul>   
-
-                <p>Os tipos de dados SIMD foram introduzidos à arquitetura x86 como parte das extensões do conjunto de instruções para otimizar o desempenho de aplicações de multimídia. O conceito básico é que múltiplos operandos são agrupados em um único item de memória referenciado e que esses múltiplos operandos são operados em paralelo. Os tipos são os seguintes:</p>
-
-                <ul>
-                    <li>Byte agrupado e inteiro de byte agrupado: bytes agrupados em uma quadword de 64bits ou double 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um bit inteiro;</li>
-
-                    <li>Palavra agrupada e inteiro de palavra agrupada: palavras de 16bits agrupados em uma quadword de 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
-                    <li>Doubleword agrupado e inteiro de doubleword agrupado: doublewords de 32bits agrupados em uma quad word de 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
-
-                    <li>Quadword agrupado e inteiro de quadword agrupado: duas quadwords de 64bits qgrupadas em uma double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
-
-                    <li>Ponto flutuante de precisão simples agrupado e ponto flutuante de precisão dupla agrupado: quatro valores de ponto flutuante de 32bits ou dois valores de ponto flutuante de 64bits agrupados em uma double quadword de 128bits.</li>
-                </ul>
-            </section>
-            <section>
-                <h2>
-                    4 – Explique os tipos de Operações possíveis em um
-                    computador.
-                </h2>
-                <ul>
-                    <li>Transferência de dados:  Especifica o local dos operandos de origem e destino, a extensão dos da dos e o modo de endereçamento para cada operando;</li>
-
-                    <li>
-                        Aritmética:  A  maioria  das  máquinas  oferece  operações  aritméticas  básicas  de  adição,  sub tração, multiplicação  e  divisão.  São  invariavelmente  fornecidas  para  números  inteiros  com  sinal.  Normalmente, elas  também  são  fornecidas  para  números  de  ponto  flutuante  e  decimal  agrupado.  Outras  o perações possíveis incluem uma série de instruções de único operando, por exemplo:
-                        <ul>
-                            <li>
-                                Absolute:  apanha  o  valor  absoluto  do   operando,  
-                            </li>
-                            
-                            <li>
-                                negate:  inverte  o  sinal  do  operando,
-                            </li>
-
-                            <li>
-                                incremente:  soma  1 ao  operando 
-                            </li>
-                            <li>
-                                decrement:  subrai  1  do   operando.  
-                            </li>
-                            
-                        </ul> 
-
-                        <p>A  execução  de  uma  instrução  aritmética  pode  envolver operações de transferência de dados  para posicionar operandos para entrada na ALU e entregar na saída da ALU.</p>
-                    </li>
-
-                    <li>
-                        Lógicas:  Operações  para  manipular  bits  individuais  de  uma  pala vra  ou   outras  unidades  endereçáveis, normalmente  conhecidas  como  “bit  twiddling”.  São  baseadas  e m  operações  booleanas.  Algu mas  das operações  lógicas  básicas  são:  NOT(inverte  um  bit),  AND,OR  e  Exclusive  OR  (XOR)  são  as  funções lógicas mais comuns com dois operandos. Equal é um teste binário útil; 
-                    </li>
-
-                    <li>
-                        Conversão:  Instruções  de  conversão  são  aquelas  que  mudam  o   formato  ou  operam  sobr e  o  fo rmato  dos dados.  Ex. con versão de  decimal  para  binário.  Um exemplo  de  uma  instrução  de ed ição mais  complexa  é a ins trução Translate  (TR) do EAS/3 90. Essa  instrução  pode ser u sada para  converter um  código  de 8bits para outro e utiliza 3 operandos: TR R1(L), R2;
-                    </li>
-
-                    <li>
-                        Entrada  e  sa ída:  As  instruções  de  entrada  e  s aída,  possuem  diversas  técnicas  que  podem  s er  usadas, incluindo  E/S  programada,  independente,  E/S  programada  mapeada  na  me mória,  DMA  e  o  uso  de  um processador  de  E/S.  Muitas  implementações  ofe recem  a penas  algumas  instruções  de  E/S,  com  ações específicas ditadas por parâmetros, códigos ou palavras de comando. 
-                    </li>
+                    <h3>Exemplos de instruções para processadores com 3 endereços:</h3> 
+                    <p>Operando 1, operando 2, resultado: sub y,a,b</p>
                     
-                    <li>
-                        Controle  de  sistema:  São  aquelas  que  podem  ser  executadas  apenas  e nquanto  o  processador  está  em um  c erto  estado  p rivilegiado  ou  es tá  executando  um  programa   em  uma  área  privilegiada  especial  da memória.  Normalmente,  essas  instruções  são  reservadas  para  o  uso  do  sistema  operacional.  Alguns exemplos  de  operações  de  controle  são:  Uma  instrução  de  controle  do  sistema  pode  ler  ou  alterar  um registrador  de  controle;  outro  exemplo  é  u ma  instrução  para  ler  ou  modificar  uma  chave  de   proteção  de armazenamento,  como  a  que  é  usada  no  sistema  de  memória  do  EAS/390.  Outro  exemplo  é  o  acesso para processar blocos de controle em um sistema multiprogramado; 
-                    </li>
+                    <h3>Exemplos de instruções para processadores com 2 endereços:</h3> 
+                    <p>Neste caso, um endereço realiza trabalho duplo, como operando e como resultado: a=a+b (move y,a // add y,b)</p>
 
-                    <li>
-                        Transferência  de  controle:  Uma  fração  significativa  das  instruções  em  um  programa  tem  como  função mudar  a  sequência  de  execução  de  instruções.  Para  essas  instruções,  a  operação  realizada  pelo processador é atualizar  o contador de  programa para conter o endereço de alguma instrução  na memória. Os mais importantes motivos das operações de transferência de controle são: 
-                        <ol>
-                            <li>
-                                Loop  no  programa  para  processar  uma  sequência  de  instruções  repetidamente,  para  que  todos  os dados sejam processados, ao invés de escrever cada instrução separadamente; 
-                            </li>
-                            <li>
-                                Para uma tomada de decisão; 
-                            </li>
-                            <li>
-                                Mecanismos  pa ra  dividir  a  tarefa  em  pedaços  menores  para  que  possam  ser  trabalhadas  uma  de  cada vez. 
-                            </li>
-                        </ol>
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>5 – Explique as características dos processadores CISC.</h2>
-                <p> CISC  (Complex  Instruction  Set  Computer,  ou,  em  um a  tradução  literal,  “Computador  com  um Conjunto Complexo de Instruções”): é um processador capaz de executar centenas de  instruções  complexas  diferentes  sendo,  assim,  extremamente  versátil.  Exemplos  de  processadores  CISC são  os  386  e  os  486  da  Intel.  Os  processadores  baseados  na  computação  de  conjunto  de  instruções complexas  contêm  uma  micro  programação,  ou  seja,  um  conjunto  de  códigos  de  instruções  que  são gravados  no  processador,  permitindo-lhe  receber  as  instruções  dos  programas  e  executá‐las,  utilizando as instruções contidas na sua micro programação. <b>Resumidamente:</b> </p>
-                
-                <ul>
-                    <li>
-                        Menos registradores
-                    </li>
+                    <h3>Exemplos de instruções para processadores com 1 endereço:</h3> 
+                    <p>Este é o caso mais simples e para que funcione, um segundo endereço precisa ser implícito, sendo este endereço, um registrador do processador, conhecido como acumulador (AC). O acumulador contem um dos operandos e é usado para armazenar o resultado: Load d, mpy e, add c (ac=d, ac=ac*e, ac=ac+c).</p>
                     
-                    <li>
-                        Mais opcodes(através de micro-códigos)
-                    </li>
+                    <h3>Exemplos de instruções para processadores com nenhum endereço:</h3> 
+                    <p>Existem também os casos dos processadores com zero endereços para algumas instruções, que se aplicam a uma organização de memória especial, chamada de pilha.</p>
+                </section>
+                <section>
+                    <h2>3 – Explique tipo de dados e qual sua relevância.</h2>
+                    <p>Tipo de dados é a representação computacional de algo do mundo real, usualmente em linguagens de alto nível temos os tipos primitivos como: </p>
+                    <ul>
+                        <li>String(caractere)</li>
+                        <li>Integer(inteiro)</li>
+                        <li>Float(número de ponto flutuante ou real)</li>
+                        <li>Boolean(booleano ou lógico)</li>
+                    </ul>
+
+                    <p>E em assembly podemos ter tipos como: </p>
                     
-                    <li>
-                        Mais lento
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>6 – Explique as características dos processadores RISC.</h2>
-                
-                <p>Reduced  Ins truction  Set  Comp uter  ou  Computador  co m  um  Conjunto  Reduzido  de  Instruções (RISC),  é   uma  linha  de  arquitetura  de  c omputadores  que  favorece  um  conjunto  simples  e  pequeno  de instruções  que  levam  aproximadamente  a  mesma  quantidade  d e  tempo  para   serem  executadas.</p>
-
-                <p>Como exemplo  de  aplicação  dessa  arquitetura  são   DEC  Alpha,  SPARC,  MIPS,  e  PowerPC.  O  tipo   de microprocessador  mais  largamente  usado  em  desktops,  o  x86,  é  mais  CISC  do  que  RISC,  embora  chips mais  novos  traduzam  instruções  x86  baseadas  em  arquitetura  CISC  em  formas  baseadas  em  arquitetura RISC  mais  simples,  utilizando  prioridade  de  execução.   Os  processadores  baseados  na  computação  de conjunto  de  instruções  reduzido  não  tem  microprogramação,  as  instruções  são  executadas  diretamente pelo hardware. Como característica, esta arquitetura, além de não ter microcódigo, tem o conjunto de instruções reduzido, bem como baixo nível de complexidade. <b>Resumidamente:</b> </p>
-                
-                <ul>
-                    <li>
-                        Muitos registradores
-                    </li>
-                    
-                    <li>
-                        Menos opcodes
-                    </li>
-                    
-                    <li>
-                        Mais rápido
-                    </li>
-                    
-                    <li>
-                        Foco no uso de pipelines
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>
-                    7 - Explique as características dos processadores Híbridos
-                    CISC-RISC.
-                </h2>
-
-                <p>As características dos processadores são hibridas por simples questão de performance. Como na arquitetura CISC é que já temos muitas das instruções guardadas no  próprio processador, o que facilita o trabalho  dos  programadores, que já dispõe de praticamente todas as instruções que serão usadas em seus  programas.  Internamente,  o  processador  processa  apenas  instruções  simples.  Estas instruções  internas,  variam  de  processador  para  processador,  são  como  uma  luva,  que  se  adapta  ao projeto  do  chip.  Sobre  estas  instruções  internas,  temos  um  circuito  decodificador,  que  converte  as instruções complexas  utilizadas pelos  programas em  várias instruções simples que  podem ser  entendidas pelo  processador.  Estas  instruções  complexas  sim,  são  iguais  em  todos  os   processadores  usados  em micros  PC.  O  conjunto  básico  de  instruções  usadas  em  micros  PC  é chamado  de  conjunto  x86.  Este conjunto  é composto  por  um total  de  187   instruções,  que  são  as  utilizadas por  todos os programas.  Além deste  conjunto  principal,  alguns  processadores  trazem  também  instruções  alternativas,  que  permitem  aos programas  executar  algumas  tarefas  mais  rapidamente  do  que  seria  possível  usando  as  instruções  x86 padrão. <b>Resumidamente: </b></p>
-
-                <ul>
-                    <li>Sets de instruções complexos, que são decodificados em instruções simples</li>
-                    <li>Alto desempenho</li>
-                    <li>Conjunto base de instruções(x86)</li>
-                    <li>
-                        Podem estender o conjunto básico através de algumas técnologias como:
-                        <ul>
-                            <li>MMX</li>
-                            <li>3D-NOW</li>
-                            <li>SSE</li>
-                        </ul>
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>
-                    8 – Explique, utilizando as características do ciclo de
-                    execução de instrução, Pipeline.
-                </h2>
-                <p>A pipeline  é uma  forma de  organizar o  funcionamento da  CPU criada  com o  intuito de melhorar o  desempenho  da  mesma.  Nela,  ao   invés  de  uma  instrução  esperar  que  a  instrução  anterior  seja executada para que então ela seja executada, a instrução é dividida em:</p> 
-
-                <ul>
-                    <li>
-                        Buscar instrução(FI, do inglês Fetch Instruction): Ler a próxima instrução esperada em um buffer;
-                    </li>
-
-                    <li>
-                        Decodidficar instrução (DI): determinar o opcode e os especificadores dos operandos; 
-                    </li>
-
-                    <li>
-                        Calcular  operandos  (CO):  calcular  o  endereço  efetivo  de  cada  operando  de  origem,  que  pode envolver endereçamento por deslocamento, registrador indireto ou outras formas de cálculo de endereço;
-                    </li>
-
-                    <li>
-                        Obter  operandos  (FO:  Fetch  operands):  obter  cada  operando  da  memória.  Operandos  que  se  encontram nos registradores, não precisam ser lidos pela memória; 
-                    </li>
-
-                    <li>
-                        Executar  instrução  (EI):  efetuar  a  operação  indicada  e  armazenar o resultado,  se  houver  na  posição operando de destino especificada; 
-                    </li>
-
-                    <li>
-                        Escrever operando (Write operands): Armazenar o resultado na memória.
-                    </li>
-                </ul>
-                
-                
-            </section>
-
-            <section>
-                <h2>
-                    9 – Explique os tipos de tratamento de saltos em Pipelines.
-                </h2>
-
-                <p> Múltiplos  fluxos:  Tem  dois  pipelines,  fazendo  uso  de  dois  fluxos.  Com  múltiplos  pipelines, existem  atrasos  no  acesso  aos  registradores  e  à  memória.  Instruções  de   desvio  a dicionais  podem  entrar no  pipeline  (ou  em  qualquer  dos  fluxos)  antes  que  a  decisão  de  desvio  original  seja  resolvida.  Cada  uma dessas instruções precisa de um fluxo adicional.</p>
-                
-                <ul>
-                    <li>
-                        <b>Busca  antecipada  do  alvo  do  desvio:</b>  Quando  um  desvio  condicional  é  reconhecido,  o  alvo  do  desvio  é lido  antecipadamente, além  da  instrução  que segue o  desvio.  Esse  alvo é  então  salvo  até que  a  instrução de desvio seja executada. Se o desvio for tomado, o alvo já foi obtido.
-                    </li>
-
-                    <li>
-                        <b>Buffer  de   laço  de  repetição:</b>  Um  buffer  de  laço  de  repetição  é  uma  memória  pequena  e  extremamente rápida  mantida  pelo estágio  pipeline  de busca  da  instrução e  que  contém  n  instruções  mais  recentemente lidas  na  sequência.  Se  um  desvio  está  para  ser  tomado,  o  hardware  primeiro  verifica  se  o   alvo  do  desvio já está  no buffer.  Se estiver, a próxima instrução é  obtida do buffer. O buffer  de laço de  repetição possui 3 benefícios:
-
-                        <ul>
-                            <li>
-                                Com o uso de busca an tecipada, o buffer conterá algumas instruções em sequência na frente do endereço  da  instrução  atual,  assim  as  instruções  obtidas  na  sequência  estarão  disponíveis  sem  o  tempo usual de acesso à memória.
-                            </li>
-
-                            <li>
-                                Se  um  desvio  para   um  alvo  estiver  apenas  algumas  posições  à frente do  endereço  da  instrução de desvio, o alvo já estará no buffer.
-                            </li>
-
-                            <li>
-                                É particularmente bem adaptada para lidar com lações ou interações.
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <b>Previsão  de  desvio:</b>  Várias  técnicas  podem  ser  usadas  para  prever  se  um  desvio  será  tomado.  Entre  as mais comuns estão as seguintes:   
+                    <ul>
+                        <li>Geral: locais de byte, word (16 bits), palavras duplas (32bits), quatro palavras (64 bits) e quatro palavras duplas (128bits) com conteúdo binário arbitrário.</li>
                         
-                        <ul>
-                            <li>
-                                <b>Previsão nunca tomada:</b> Nunca vai ter salto;
-                            </li>
+                        <li>Números inteiros: Um valor binário com sinal, contido em um byte, palavra ou palavras duplas, usando a representação de complemento a dois. Interpretado como campo de bit ou inteiro;</li>
+
+                        <li>Números ordinais: Um inteiro sem sinal contido em um byte, palavra ou palavras duplas;</li>
+                        
+                        <li>Números em BCD (Binary coded decimal) (BCD) não agrupado: uma representação de um dígito BCD no intervalo de 0 a 9, com um dígito em cada byte;</li>
+
+                        <li>Agrupado BCD: Representação de byte agrupado de dois dígitos BCD; valor no intervalo de 0 a 99;</li>
+
+                        <li>Ponteiro near: Um endereço efetivo de 16, 32 ou 64 bits, que representa o deslocamento dentro de um segmento. Usado para todos os ponteiros em uma memória não segmentada e para referências dentro de um segmento em uma memória segmentada.</li>
+
+                        <li>Ponteiro far: são usados para referência à memória em um modelo de memória segmentado, onde a identidade de um segmento sendo acessado precisa ser especificada explicitamente;</li>
+
+                        <li>Campo de bits: Uma sequência contigua de bits, contendo de zero a 232 - 1 bits.</li>
+
+                        <li>Cadeia de bytes: Uma sequência contigua de bytes, palavras ou doublewords, contendo de zero a 232 - 1 bytes.</li>
+
+                        <li>Ponto flutuante: ((Expoente)(significado) - precisão simples: 32 bits, sendo 22 bits para o significado, 8 bits para o expoente e um para o sinal. Precisão dupla: 64 bits, sendo 52 bits para o significado, 11 bits para o expoente e um para o sinal. Ponto flutuante de precisão dupla extendida: 80 bits, sendo 63 bits para o significado, 1 bit indicando bit de inteiro, 16 bits indicando o expoente e 1 bit de sinal.</li>
+
+                        <li>SIMD agrupada (do inglês single instruction , multiple data \u2013 única instrução, múltiplos dados): Tipos de dados de 64 a 128bits.</li>
+                    </ul>   
+
+                    <p>Os tipos de dados SIMD foram introduzidos à arquitetura x86 como parte das extensões do conjunto de instruções para otimizar o desempenho de aplicações de multimídia. O conceito básico é que múltiplos operandos são agrupados em um único item de memória referenciado e que esses múltiplos operandos são operados em paralelo. Os tipos são os seguintes:</p>
+
+                    <ul>
+                        <li>Byte agrupado e inteiro de byte agrupado: bytes agrupados em uma quadword de 64bits ou double 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um bit inteiro;</li>
+
+                        <li>Palavra agrupada e inteiro de palavra agrupada: palavras de 16bits agrupados em uma quadword de 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
+                        <li>Doubleword agrupado e inteiro de doubleword agrupado: doublewords de 32bits agrupados em uma quad word de 64bits ou double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
+
+                        <li>Quadword agrupado e inteiro de quadword agrupado: duas quadwords de 64bits qgrupadas em uma double quadword de 128bits, interpretada como um campo de bit ou como um inteiro;</li>
+
+                        <li>Ponto flutuante de precisão simples agrupado e ponto flutuante de precisão dupla agrupado: quatro valores de ponto flutuante de 32bits ou dois valores de ponto flutuante de 64bits agrupados em uma double quadword de 128bits.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                        4 – Explique os tipos de Operações possíveis em um
+                        computador.
+                    </h2>
+                    <ul>
+                        <li>Transferência de dados:  Especifica o local dos operandos de origem e destino, a extensão dos da dos e o modo de endereçamento para cada operando;</li>
+
+                        <li>
+                            Aritmética:  A  maioria  das  máquinas  oferece  operações  aritméticas  básicas  de  adição,  sub tração, multiplicação  e  divisão.  São  invariavelmente  fornecidas  para  números  inteiros  com  sinal.  Normalmente, elas  também  são  fornecidas  para  números  de  ponto  flutuante  e  decimal  agrupado.  Outras  o perações possíveis incluem uma série de instruções de único operando, por exemplo:
+                            <ul>
+                                <li>
+                                    Absolute:  apanha  o  valor  absoluto  do   operando,  
+                                </li>
+                                
+                                <li>
+                                    negate:  inverte  o  sinal  do  operando,
+                                </li>
+
+                                <li>
+                                    incremente:  soma  1 ao  operando 
+                                </li>
+                                <li>
+                                    decrement:  subrai  1  do   operando.  
+                                </li>
+                                
+                            </ul> 
+
+                            <p>A  execução  de  uma  instrução  aritmética  pode  envolver operações de transferência de dados  para posicionar operandos para entrada na ALU e entregar na saída da ALU.</p>
+                        </li>
+
+                        <li>
+                            Lógicas:  Operações  para  manipular  bits  individuais  de  uma  pala vra  ou   outras  unidades  endereçáveis, normalmente  conhecidas  como  “bit  twiddling”.  São  baseadas  e m  operações  booleanas.  Algu mas  das operações  lógicas  básicas  são:  NOT(inverte  um  bit),  AND,OR  e  Exclusive  OR  (XOR)  são  as  funções lógicas mais comuns com dois operandos. Equal é um teste binário útil; 
+                        </li>
+
+                        <li>
+                            Conversão:  Instruções  de  conversão  são  aquelas  que  mudam  o   formato  ou  operam  sobr e  o  fo rmato  dos dados.  Ex. con versão de  decimal  para  binário.  Um exemplo  de  uma  instrução  de ed ição mais  complexa  é a ins trução Translate  (TR) do EAS/3 90. Essa  instrução  pode ser u sada para  converter um  código  de 8bits para outro e utiliza 3 operandos: TR R1(L), R2;
+                        </li>
+
+                        <li>
+                            Entrada  e  sa ída:  As  instruções  de  entrada  e  s aída,  possuem  diversas  técnicas  que  podem  s er  usadas, incluindo  E/S  programada,  independente,  E/S  programada  mapeada  na  me mória,  DMA  e  o  uso  de  um processador  de  E/S.  Muitas  implementações  ofe recem  a penas  algumas  instruções  de  E/S,  com  ações específicas ditadas por parâmetros, códigos ou palavras de comando. 
+                        </li>
+                        
+                        <li>
+                            Controle  de  sistema:  São  aquelas  que  podem  ser  executadas  apenas  e nquanto  o  processador  está  em um  c erto  estado  p rivilegiado  ou  es tá  executando  um  programa   em  uma  área  privilegiada  especial  da memória.  Normalmente,  essas  instruções  são  reservadas  para  o  uso  do  sistema  operacional.  Alguns exemplos  de  operações  de  controle  são:  Uma  instrução  de  controle  do  sistema  pode  ler  ou  alterar  um registrador  de  controle;  outro  exemplo  é  u ma  instrução  para  ler  ou  modificar  uma  chave  de   proteção  de armazenamento,  como  a  que  é  usada  no  sistema  de  memória  do  EAS/390.  Outro  exemplo  é  o  acesso para processar blocos de controle em um sistema multiprogramado; 
+                        </li>
+
+                        <li>
+                            Transferência  de  controle:  Uma  fração  significativa  das  instruções  em  um  programa  tem  como  função mudar  a  sequência  de  execução  de  instruções.  Para  essas  instruções,  a  operação  realizada  pelo processador é atualizar  o contador de  programa para conter o endereço de alguma instrução  na memória. Os mais importantes motivos das operações de transferência de controle são: 
+                            <ol>
+                                <li>
+                                    Loop  no  programa  para  processar  uma  sequência  de  instruções  repetidamente,  para  que  todos  os dados sejam processados, ao invés de escrever cada instrução separadamente; 
+                                </li>
+                                <li>
+                                    Para uma tomada de decisão; 
+                                </li>
+                                <li>
+                                    Mecanismos  pa ra  dividir  a  tarefa  em  pedaços  menores  para  que  possam  ser  trabalhadas  uma  de  cada vez. 
+                                </li>
+                            </ol>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>5 – Explique as características dos processadores CISC.</h2>
+                    <p> CISC  (Complex  Instruction  Set  Computer,  ou,  em  um a  tradução  literal,  “Computador  com  um Conjunto Complexo de Instruções”): é um processador capaz de executar centenas de  instruções  complexas  diferentes  sendo,  assim,  extremamente  versátil.  Exemplos  de  processadores  CISC são  os  386  e  os  486  da  Intel.  Os  processadores  baseados  na  computação  de  conjunto  de  instruções complexas  contêm  uma  micro  programação,  ou  seja,  um  conjunto  de  códigos  de  instruções  que  são gravados  no  processador,  permitindo-lhe  receber  as  instruções  dos  programas  e  executá‐las,  utilizando as instruções contidas na sua micro programação. <b>Resumidamente:</b> </p>
+                    
+                    <ul>
+                        <li>
+                            Menos registradores
+                        </li>
+                        
+                        <li>
+                            Mais opcodes(através de micro-códigos)
+                        </li>
+                        
+                        <li>
+                            Mais lento
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>6 – Explique as características dos processadores RISC.</h2>
+                    
+                    <p>Reduced  Ins truction  Set  Comp uter  ou  Computador  co m  um  Conjunto  Reduzido  de  Instruções (RISC),  é   uma  linha  de  arquitetura  de  c omputadores  que  favorece  um  conjunto  simples  e  pequeno  de instruções  que  levam  aproximadamente  a  mesma  quantidade  d e  tempo  para   serem  executadas.</p>
+
+                    <p>Como exemplo  de  aplicação  dessa  arquitetura  são   DEC  Alpha,  SPARC,  MIPS,  e  PowerPC.  O  tipo   de microprocessador  mais  largamente  usado  em  desktops,  o  x86,  é  mais  CISC  do  que  RISC,  embora  chips mais  novos  traduzam  instruções  x86  baseadas  em  arquitetura  CISC  em  formas  baseadas  em  arquitetura RISC  mais  simples,  utilizando  prioridade  de  execução.   Os  processadores  baseados  na  computação  de conjunto  de  instruções  reduzido  não  tem  microprogramação,  as  instruções  são  executadas  diretamente pelo hardware. Como característica, esta arquitetura, além de não ter microcódigo, tem o conjunto de instruções reduzido, bem como baixo nível de complexidade. <b>Resumidamente:</b> </p>
+                    
+                    <ul>
+                        <li>
+                            Muitos registradores
+                        </li>
+                        
+                        <li>
+                            Menos opcodes
+                        </li>
+                        
+                        <li>
+                            Mais rápido
+                        </li>
+                        
+                        <li>
+                            Foco no uso de pipelines
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                        7 - Explique as características dos processadores Híbridos
+                        CISC-RISC.
+                    </h2>
+
+                    <p>As características dos processadores são hibridas por simples questão de performance. Como na arquitetura CISC é que já temos muitas das instruções guardadas no  próprio processador, o que facilita o trabalho  dos  programadores, que já dispõe de praticamente todas as instruções que serão usadas em seus  programas.  Internamente,  o  processador  processa  apenas  instruções  simples.  Estas instruções  internas,  variam  de  processador  para  processador,  são  como  uma  luva,  que  se  adapta  ao projeto  do  chip.  Sobre  estas  instruções  internas,  temos  um  circuito  decodificador,  que  converte  as instruções complexas  utilizadas pelos  programas em  várias instruções simples que  podem ser  entendidas pelo  processador.  Estas  instruções  complexas  sim,  são  iguais  em  todos  os   processadores  usados  em micros  PC.  O  conjunto  básico  de  instruções  usadas  em  micros  PC  é chamado  de  conjunto  x86.  Este conjunto  é composto  por  um total  de  187   instruções,  que  são  as  utilizadas por  todos os programas.  Além deste  conjunto  principal,  alguns  processadores  trazem  também  instruções  alternativas,  que  permitem  aos programas  executar  algumas  tarefas  mais  rapidamente  do  que  seria  possível  usando  as  instruções  x86 padrão. <b>Resumidamente: </b></p>
+
+                    <ul>
+                        <li>Sets de instruções complexos, que são decodificados em instruções simples</li>
+                        <li>Alto desempenho</li>
+                        <li>Conjunto base de instruções(x86)</li>
+                        <li>
+                            Podem estender o conjunto básico através de algumas técnologias como:
+                            <ul>
+                                <li>MMX</li>
+                                <li>3D-NOW</li>
+                                <li>SSE</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                        8 – Explique, utilizando as características do ciclo de
+                        execução de instrução, Pipeline.
+                    </h2>
+                    <p>A pipeline  é uma  forma de  organizar o  funcionamento da  CPU criada  com o  intuito de melhorar o  desempenho  da  mesma.  Nela,  ao   invés  de  uma  instrução  esperar  que  a  instrução  anterior  seja executada para que então ela seja executada, a instrução é dividida em:</p> 
+
+                    <ul>
+                        <li>
+                            Buscar instrução(FI, do inglês Fetch Instruction): Ler a próxima instrução esperada em um buffer;
+                        </li>
+
+                        <li>
+                            Decodidficar instrução (DI): determinar o opcode e os especificadores dos operandos; 
+                        </li>
+
+                        <li>
+                            Calcular  operandos  (CO):  calcular  o  endereço  efetivo  de  cada  operando  de  origem,  que  pode envolver endereçamento por deslocamento, registrador indireto ou outras formas de cálculo de endereço;
+                        </li>
+
+                        <li>
+                            Obter  operandos  (FO:  Fetch  operands):  obter  cada  operando  da  memória.  Operandos  que  se  encontram nos registradores, não precisam ser lidos pela memória; 
+                        </li>
+
+                        <li>
+                            Executar  instrução  (EI):  efetuar  a  operação  indicada  e  armazenar o resultado,  se  houver  na  posição operando de destino especificada; 
+                        </li>
+
+                        <li>
+                            Escrever operando (Write operands): Armazenar o resultado na memória.
+                        </li>
+                    </ul>
+                    
+                    
+                </section>
+                <section>
+                    <h2>
+                        9 – Explique os tipos de tratamento de saltos em Pipelines.
+                    </h2>
+
+                    <p> Múltiplos  fluxos:  Tem  dois  pipelines,  fazendo  uso  de  dois  fluxos.  Com  múltiplos  pipelines, existem  atrasos  no  acesso  aos  registradores  e  à  memória.  Instruções  de   desvio  a dicionais  podem  entrar no  pipeline  (ou  em  qualquer  dos  fluxos)  antes  que  a  decisão  de  desvio  original  seja  resolvida.  Cada  uma dessas instruções precisa de um fluxo adicional.</p>
+                    
+                    <ul>
+                        <li>
+                            <b>Busca  antecipada  do  alvo  do  desvio:</b>  Quando  um  desvio  condicional  é  reconhecido,  o  alvo  do  desvio  é lido  antecipadamente, além  da  instrução  que segue o  desvio.  Esse  alvo é  então  salvo  até que  a  instrução de desvio seja executada. Se o desvio for tomado, o alvo já foi obtido.
+                        </li>
+
+                        <li>
+                            <b>Buffer  de   laço  de  repetição:</b>  Um  buffer  de  laço  de  repetição  é  uma  memória  pequena  e  extremamente rápida  mantida  pelo estágio  pipeline  de busca  da  instrução e  que  contém  n  instruções  mais  recentemente lidas  na  sequência.  Se  um  desvio  está  para  ser  tomado,  o  hardware  primeiro  verifica  se  o   alvo  do  desvio já está  no buffer.  Se estiver, a próxima instrução é  obtida do buffer. O buffer  de laço de  repetição possui 3 benefícios:
+
+                            <ul>
+                                <li>
+                                    Com o uso de busca an tecipada, o buffer conterá algumas instruções em sequência na frente do endereço  da  instrução  atual,  assim  as  instruções  obtidas  na  sequência  estarão  disponíveis  sem  o  tempo usual de acesso à memória.
+                                </li>
+
+                                <li>
+                                    Se  um  desvio  para   um  alvo  estiver  apenas  algumas  posições  à frente do  endereço  da  instrução de desvio, o alvo já estará no buffer.
+                                </li>
+
+                                <li>
+                                    É particularmente bem adaptada para lidar com lações ou interações.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <b>Previsão  de  desvio:</b>  Várias  técnicas  podem  ser  usadas  para  prever  se  um  desvio  será  tomado.  Entre  as mais comuns estão as seguintes:   
                             
-                            <li>
-                                <b>Previsão sempre tomada:</b> Sempre atrasa 1 tempo pipeline;
-                            </li>
+                            <ul>
+                                <li>
+                                    <b>Previsão nunca tomada:</b> Nunca vai ter salto;
+                                </li>
+                                
+                                <li>
+                                    <b>Previsão sempre tomada:</b> Sempre atrasa 1 tempo pipeline;
+                                </li>
 
-                            <li>
-                                <b>Previsão  por  opcode  (mais  utilizada):</b>  O  processador  assume  que  o  desvio  será  feito  para determinados  opcodes  d e  desvio  e  não  para  outros.  Taxas  de  sucesso  superiores  a  75%  com  esta estratégia.   
-                            </li>
+                                <li>
+                                    <b>Previsão  por  opcode  (mais  utilizada):</b>  O  processador  assume  que  o  desvio  será  feito  para determinados  opcodes  d e  desvio  e  não  para  outros.  Taxas  de  sucesso  superiores  a  75%  com  esta estratégia.   
+                                </li>
 
-                            <li>
-                                <b>Chave  tomada/não  tomada:</b>  As  estratégias  dinâmicas  tentam  melhorar  a  precisão  da  previsão armazenando  um  histórico  de  instruções  de  desvios  condicionais  de  programa .  Um  ou  mais  bits  podem ser  associados  com  cada  instrução  de  desvio  condicional  que  reflete  o  histórico  recente  da  instrução. Estes  bits  são  conhecidos  como  uma  chave  tomada/não  tomada  que  direciona  o  processador  a  tomar uma determinada decisão na próxima  vez que a instrução for encontrada.   
-                            </li>
+                                <li>
+                                    <b>Chave  tomada/não  tomada:</b>  As  estratégias  dinâmicas  tentam  melhorar  a  precisão  da  previsão armazenando  um  histórico  de  instruções  de  desvios  condicionais  de  programa .  Um  ou  mais  bits  podem ser  associados  com  cada  instrução  de  desvio  condicional  que  reflete  o  histórico  recente  da  instrução. Estes  bits  são  conhecidos  como  uma  chave  tomada/não  tomada  que  direciona  o  processador  a  tomar uma determinada decisão na próxima  vez que a instrução for encontrada.   
+                                </li>
 
-                            <li>
-                                <b>Tabela de histórico de desvio:</b>  é  uma  pequena  memória  cache  associada  com  o  estágio  de leitura  da  instrução  do  pipeline.  Cada  entrada  da  tabela  consiste  de  três  elementos:  o  endereço  da instrução  de  desvio,  algum  número  de  bits  de  histórico  que  guardam  o  estado  de  uso  dessa  instrução  e informação  sobre  a  instrução  alvo.  Outra  possibilidade  é  que  o  terceiro  campo  contenha  a  instrução  alvo em  si.  A  negociação  é  clara:  armazenar  o  endereço  do  alvo  necessita  de   uma  tabela  menor,  porém,  um tempo maior para obter a instrução se comparado com armazenar a instrução alvo.
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>10 – Explique Superpipeline.</h2>
-                <p>O  superpipeline  explora  o  fato  de  que  muitos  estágios  de  pipeline  executam  tarefas  que requerem  menos  do  que  a  metade  de  um  ciclo  de  clock.  Assim,  a  velocidade  interna  de  clock  dobrada possibilita  o  desempenho  de  duas  tarefas  de  um  ciclo  de  clock  externo.  O  controle  assíncrono  do processador é uma dificuldade do superpipeline.</p>
-            </section>
-            <section>
-                <h2>11 – Explique Superescalar.</h2>
-                <p>Superescalar  é  aquele  em  que  múltiplos  e  independentes  pipelines  de  instruções  são  usados. Cada  pipeline  consiste  de  múltiplos  estágios,  de  tal  forma  que  cada  pipeline  possa   lidar  com   múltiplas instruções  ao  mesmo  tempo.  Os  pipelines  múltiplos  introduzem  um  nível  de  paralelismo,  possibilitando que múltiplos fluxos de instruções sejam processados ao mesmo tempo.</p>
-            </section>
-            <section>
-                <h2>12 – Explique as limitações de um sistema Superescalar.</h2>
-                <p>A abordagem superescalar depende da habilidade de executar várias instruções em paralelo.O termo paralelismo em nível de instruções diz respeito ao nível no qual as instruções de um programa podem ser executadas de forma paralela (em média).Aumento da complexidade e problemas de dependências e desvios.</p> 
-                
-                <ul>
-                    <li>
-                        Dependência  de  dados  verdadeira:  A  segunda  i nstrução  pode  ser  obtida  e  decodificada,  mas  não  pode ser  executada  até  que  a  primeira  execute.  O  motivo  é  que  a  segunda  instrução  precisa  de  dados produzidas pela primeira. 
-                    </li>
+                                <li>
+                                    <b>Tabela de histórico de desvio:</b>  é  uma  pequena  memória  cache  associada  com  o  estágio  de leitura  da  instrução  do  pipeline.  Cada  entrada  da  tabela  consiste  de  três  elementos:  o  endereço  da instrução  de  desvio,  algum  número  de  bits  de  histórico  que  guardam  o  estado  de  uso  dessa  instrução  e informação  sobre  a  instrução  alvo.  Outra  possibilidade  é  que  o  terceiro  campo  contenha  a  instrução  alvo em  si.  A  negociação  é  clara:  armazenar  o  endereço  do  alvo  necessita  de   uma  tabela  menor,  porém,  um tempo maior para obter a instrução se comparado com armazenar a instrução alvo.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>10 – Explique Superpipeline.</h2>
+                    <p>O  superpipeline  explora  o  fato  de  que  muitos  estágios  de  pipeline  executam  tarefas  que requerem  menos  do  que  a  metade  de  um  ciclo  de  clock.  Assim,  a  velocidade  interna  de  clock  dobrada possibilita  o  desempenho  de  duas  tarefas  de  um  ciclo  de  clock  externo.  O  controle  assíncrono  do processador é uma dificuldade do superpipeline.</p>
+                </section>
+                <section>
+                    <h2>11 – Explique Superescalar.</h2>
+                    <p>Superescalar  é  aquele  em  que  múltiplos  e  independentes  pipelines  de  instruções  são  usados. Cada  pipeline  consiste  de  múltiplos  estágios,  de  tal  forma  que  cada  pipeline  possa   lidar  com   múltiplas instruções  ao  mesmo  tempo.  Os  pipelines  múltiplos  introduzem  um  nível  de  paralelismo,  possibilitando que múltiplos fluxos de instruções sejam processados ao mesmo tempo.</p>
+                </section>
+                <section>
+                    <h2>12 – Explique as limitações de um sistema Superescalar.</h2>
+                    <p>A abordagem superescalar depende da habilidade de executar várias instruções em paralelo.O termo paralelismo em nível de instruções diz respeito ao nível no qual as instruções de um programa podem ser executadas de forma paralela (em média).Aumento da complexidade e problemas de dependências e desvios.</p> 
+                    
+                    <ul>
+                        <li>
+                            Dependência  de  dados  verdadeira:  A  segunda  i nstrução  pode  ser  obtida  e  decodificada,  mas  não  pode ser  executada  até  que  a  primeira  execute.  O  motivo  é  que  a  segunda  instrução  precisa  de  dados produzidas pela primeira. 
+                        </li>
 
-                    <li>
-                        Dependências  procedurais:  As  instruções  que  vem  depois  de  um  desvio  (tomado  ou  não)  possuem  uma dependencia  procedural  com  o  desvio  e  não  podem  ser  executadas   até  que  o  desvio  seja  executado. Uma oportunidade de magnitude maior é perdida com cada atraso. 
-                    </li>
+                        <li>
+                            Dependências  procedurais:  As  instruções  que  vem  depois  de  um  desvio  (tomado  ou  não)  possuem  uma dependencia  procedural  com  o  desvio  e  não  podem  ser  executadas   até  que  o  desvio  seja  executado. Uma oportunidade de magnitude maior é perdida com cada atraso. 
+                        </li>
 
-                    <li>
-                        Conflito de  recursos:  Um conflito  de recursos  é  uma competição de  duas ou  mais  instruções pelo  mesmo recurso e ao mesmo tempo.
-                    </li>
+                        <li>
+                            Conflito de  recursos:  Um conflito  de recursos  é  uma competição de  duas ou  mais  instruções pelo  mesmo recurso e ao mesmo tempo.
+                        </li>
 
-                    <li>
-                        Dependência de saída: dependência de escrita após escrita (WAW , write after write) 
-                    </li>
+                        <li>
+                            Dependência de saída: dependência de escrita após escrita (WAW , write after write) 
+                        </li>
 
-                    <li>
-                        Antidependência: dependência de ler após escrever (RAW , read after write)
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>
-                    13 – Explique as possibilidades para Multiprocessadores
-                    Simétricos.
-                </h2>
+                        <li>
+                            Antidependência: dependência de ler após escrever (RAW , read after write)
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                        13 – Explique as possibilidades para Multiprocessadores
+                        Simétricos.
+                    </h2>
 
-                <p>Multiprocessadores  simétricos  ou  SMP,  do  inglês  symmetric  multiprocessor,  têm  vantagens potenciais  sobre  processadores  de  arquitetura  uniprocessador,  como  desempenho,  disponibilidade, crescimento  incremental  e  personalização  do  fornecimento.  Um  SMP  consiste  de  vários  processadores semelhantes  dentro  de  um  mesmo  computador,  interconectados  por  um  barramento  ou  algum  tipo  de arranjo de  computação.</p> 
-                
-                <p>O  problema  mais crítico  à ser  resolvido em  um SMP é  a coerência   de cache.  Cada processador  possui  a   sua  própria  cache  e  assim  é  possível  que  uma  determinada  informação  esteja presente em mais  de  uma  delas.  Se tal informação  for  alterada em  uma  cache,  então  a memória  principal e  a  outra  cache  possuem  uma  versão  inválida  dessa  informação.</p>  
-                
-                <p>Os  protocolos  de  coerência  de  cache são  projetados  para  lidar  com  esse  problema.  Quando  mais  de  um  processador  é  implementado  em  um chip  único,  a  configuração  é  conhecida  como  chip  de  multiprocessamento.</p>
-                
-                <p>Um  esquema  de  projeto relacionado  é  replicar  alguns  dos  componentes  de  um  único  processador  para  que  o  processador  possa executar  vária s  threads  de  forma  concorrente;  isto  é  conhecido  como  um  processador  mutithread.</p>
-                
-                <p>Um cluster  é  um  grupo  de  computadores  completo  conectados  trabalhando  juntos  como  um  recurso computacional  unificado  que  pode  criar  a  ilusão  de  ser  apenas  uma  máquina.</p> 
-                
-                <p>O  termo  computador completo  significa  um  sistema  que  pode  funcionar  por  conta  própria,  separado  do   cluster.  Um  sistema NUMA  é  um multiprocessador  de  memória  com partilhada  em  que  o  tempo  de  acesso  para  determinado processador  a  uma  palavra  na  memória  varia  de  acordo  com  a  posição  da  palavra  na  m emória. A classificação de sua organização é:</p>
-                
-                <ul>
-                    <li>
-                        tempo compartilhado ou barramento  comum,
-                    </li>
+                    <p>Multiprocessadores  simétricos  ou  SMP,  do  inglês  symmetric  multiprocessor,  têm  vantagens potenciais  sobre  processadores  de  arquitetura  uniprocessador,  como  desempenho,  disponibilidade, crescimento  incremental  e  personalização  do  fornecimento.  Um  SMP  consiste  de  vários  processadores semelhantes  dentro  de  um  mesmo  computador,  interconectados  por  um  barramento  ou  algum  tipo  de arranjo de  computação.</p> 
+                    
+                    <p>O  problema  mais crítico  à ser  resolvido em  um SMP é  a coerência   de cache.  Cada processador  possui  a   sua  própria  cache  e  assim  é  possível  que  uma  determinada  informação  esteja presente em mais  de  uma  delas.  Se tal informação  for  alterada em  uma  cache,  então  a memória  principal e  a  outra  cache  possuem  uma  versão  inválida  dessa  informação.</p>  
+                    
+                    <p>Os  protocolos  de  coerência  de  cache são  projetados  para  lidar  com  esse  problema.  Quando  mais  de  um  processador  é  implementado  em  um chip  único,  a  configuração  é  conhecida  como  chip  de  multiprocessamento.</p>
+                    
+                    <p>Um  esquema  de  projeto relacionado  é  replicar  alguns  dos  componentes  de  um  único  processador  para  que  o  processador  possa executar  vária s  threads  de  forma  concorrente;  isto  é  conhecido  como  um  processador  mutithread.</p>
+                    
+                    <p>Um cluster  é  um  grupo  de  computadores  completo  conectados  trabalhando  juntos  como  um  recurso computacional  unificado  que  pode  criar  a  ilusão  de  ser  apenas  uma  máquina.</p> 
+                    
+                    <p>O  termo  computador completo  significa  um  sistema  que  pode  funcionar  por  conta  própria,  separado  do   cluster.  Um  sistema NUMA  é  um multiprocessador  de  memória  com partilhada  em  que  o  tempo  de  acesso  para  determinado processador  a  uma  palavra  na  memória  varia  de  acordo  com  a  posição  da  palavra  na  m emória. A classificação de sua organização é:</p>
+                    
+                    <ul>
+                        <li>
+                            tempo compartilhado ou barramento  comum,
+                        </li>
 
-                    <li>
-                        memórias com  múltiplas portas 
-                    </li>
+                        <li>
+                            memórias com  múltiplas portas 
+                        </li>
 
-                    <li>
-                        e unidade de controle central.
-                    </li>
-                </ul>
-            </section>
-            <section>
-                <h2>14 – Explique a Lei de Pollack.</h2>
-                <p> O  aumento  d e  desempenho  do  microprocessador,  devido  aos  avanços  da  microarquitetura  é aproximadamente  proporcional  à  raiz  quadrada  do  aumento  de  sua  complexidade  (lógica  do processador).</p>
-            </section>
-            <section>
-                <h2>
-                    15 – Explique a organização Multicore para os Principais
-                    Processadores.
-                </h2>
+                        <li>
+                            e unidade de controle central.
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>14 – Explique a Lei de Pollack.</h2>
+                    <p> O  aumento  d e  desempenho  do  microprocessador,  devido  aos  avanços  da  microarquitetura  é aproximadamente  proporcional  à  raiz  quadrada  do  aumento  de  sua  complexidade  (lógica  do processador).</p>
+                </section>
+                <section>
+                    <h2>
+                        15 – Explique a organização Multicore para os Principais
+                        Processadores.
+                    </h2>
 
-                <p> No  nível  mais  alto  d a  descrição,  as  principais  variáveis  um  uma  organização  multicore  são  as seguintes:</p>
+                    <p> No  nível  mais  alto  d a  descrição,  as  principais  variáveis  um  uma  organização  multicore  são  as seguintes:</p>
 
-                <ul>
-                    <li>Números de núcleos processadores no chip.</li>
-                    <li>Números de níveis da memória cache</li>
-                    <li>Quantidade de memória cache que é compartilhada</li>
-                </ul>
+                    <ul>
+                        <li>Números de núcleos processadores no chip.</li>
+                        <li>Números de níveis da memória cache</li>
+                        <li>Quantidade de memória cache que é compartilhada</li>
+                    </ul>
 
-                <h3>Intel Core Duo</h3>
-                <p> Foi  i ntroduzido  em  2006,  implementa  dois  proc essadores  x86  supere scalares   com  uma cache  L2  compartilhada.  Como  é  comum  em  sistemas  multicore  cada  nú cleo  tem  a  su a  cache  L1 dedicada.  Neste  caso,  cada  núcleo  te m  um a  cache  de  instruções  d e  32KB  e  uma  c ache  de  dados  de  32 KB.  Cada  nú cleo  tem  uma  un idade  de  controle  té rmica.  Com  a  d ensidade  maior  de  chi ps  atuais,  o gerenciamento  térmico  é  uma  c apacidade  fundamental,  especialmente  para  laptops  e  sistemas  móveis.   A  unidade  de  controle   térmico  de  CORE  DUO  é  proj etada  para  gerenciar  a   d issipação  de  c alor  d o  chip para maximizar o desempenho de ntro das restrições térmicas, o que melhora também a ergonomia para o sistema  de  esfriamento  e  m enor  barulho  acústico  do  ventilador.  Ele  monitora  sensores  digitais  de  a lta precisão  para  m edição  de  temperatura  de  alta  precisão.  Cada  núcleo  é  uma  zona  térmica  independente. Se  a  temperatura  exceder  o limite  em  um  núcleo,  a  unidade  térmica  reduz a  ta xa de  clock  para  diminuir a geração  de  calor.</p>
+                    <h3>Intel Core Duo</h3>
+                    <p> Foi  i ntroduzido  em  2006,  implementa  dois  proc essadores  x86  supere scalares   com  uma cache  L2  compartilhada.  Como  é  comum  em  sistemas  multicore  cada  nú cleo  tem  a  su a  cache  L1 dedicada.  Neste  caso,  cada  núcleo  te m  um a  cache  de  instruções  d e  32KB  e  uma  c ache  de  dados  de  32 KB.  Cada  nú cleo  tem  uma  un idade  de  controle  té rmica.  Com  a  d ensidade  maior  de  chi ps  atuais,  o gerenciamento  térmico  é  uma  c apacidade  fundamental,  especialmente  para  laptops  e  sistemas  móveis.   A  unidade  de  controle   térmico  de  CORE  DUO  é  proj etada  para  gerenciar  a   d issipação  de  c alor  d o  chip para maximizar o desempenho de ntro das restrições térmicas, o que melhora também a ergonomia para o sistema  de  esfriamento  e  m enor  barulho  acústico  do  ventilador.  Ele  monitora  sensores  digitais  de  a lta precisão  para  m edição  de  temperatura  de  alta  precisão.  Cada  núcleo  é  uma  zona  térmica  independente. Se  a  temperatura  exceder  o limite  em  um  núcleo,  a  unidade  térmica  reduz a  ta xa de  clock  para  diminuir a geração  de  calor.</p>
 
-                <p>O  próximo  elemento  deste  processador  é  o  co ntrolador  programável  avançado  de interrupção  (APIC  –  advanced  programmable  interrupt  controler,  q ue  desempenha  uma  série  de  funções, como  o  provimento  de  interrupções entre  processadores, q  pe rmite  que  qualquer  processador  inte rroupar qualquer  outro  processador  ou  conjunto  de   processadores,  aceita  interrupções  de   E/S  e  enc aminha-as para  o  núcleo  adequado, c ada APIC  inclui  um  temporizador,  o  qual  pode s er aj ustado pelo  SO  para  gerar uma interrupção no núcleo local.</p>
+                    <p>O  próximo  elemento  deste  processador  é  o  co ntrolador  programável  avançado  de interrupção  (APIC  –  advanced  programmable  interrupt  controler,  q ue  desempenha  uma  série  de  funções, como  o  provimento  de  interrupções entre  processadores, q  pe rmite  que  qualquer  processador  inte rroupar qualquer  outro  processador  ou  conjunto  de   processadores,  aceita  interrupções  de   E/S  e  enc aminha-as para  o  núcleo  adequado, c ada APIC  inclui  um  temporizador,  o  qual  pode s er aj ustado pelo  SO  para  gerar uma interrupção no núcleo local.</p>
 
-                <p>A  lógica  de  gerenciamento  de  energia  é  responsável  por  reduzir  o  consumo  de  energia  quando  possível. Monitora as condições  térmicas  e atividade da  CPU  e ajusta  os níveis  de  voltagem  e consumo  de energia de  acordo.  O  Chip  CORE  DUO  inclui  uma  cache  L2  de  2MB  compartilhada,  onde  sua  lógica  permite alocação  dinâmica  do  espaço  da  cache  com  base  nas  necessidades  atuais  do  núcleo  de  tal  forma  que um  núcleo  pode  ser  atribuído  até  100%  da  cache  L2.  A  cache  L2  possui  lógica  para  suportar  o protocolo  MESI  para  caches  L1  anexadas.  O  principal  ponto  a  ser  considerado  é  quando  uma  escrita  é feita em nível L1.</p>
+                    <p>A  lógica  de  gerenciamento  de  energia  é  responsável  por  reduzir  o  consumo  de  energia  quando  possível. Monitora as condições  térmicas  e atividade da  CPU  e ajusta  os níveis  de  voltagem  e consumo  de energia de  acordo.  O  Chip  CORE  DUO  inclui  uma  cache  L2  de  2MB  compartilhada,  onde  sua  lógica  permite alocação  dinâmica  do  espaço  da  cache  com  base  nas  necessidades  atuais  do  núcleo  de  tal  forma  que um  núcleo  pode  ser  atribuído  até  100%  da  cache  L2.  A  cache  L2  possui  lógica  para  suportar  o protocolo  MESI  para  caches  L1  anexadas.  O  principal  ponto  a  ser  considerado  é  quando  uma  escrita  é feita em nível L1.</p>
 
-                <p>A  interface  de  barramento  conecta-se  com  o  barramento   externo,  conhecido  como  barramento  frontal, qual se conecta com a memória principal, controladores de E/S e outros chips processadores.</p>
+                    <p>A  interface  de  barramento  conecta-se  com  o  barramento   externo,  conhecido  como  barramento  frontal, qual se conecta com a memória principal, controladores de E/S e outros chips processadores.</p>
 
-                <h3>Intel Core I7</h3>
-                <p>Foi introduzido em novembro de 200 8, implementa 4 processador es x86 SMT, cada um  com uma ache L2 dedicada e com uma cache L3 compartilhada.</p>
+                    <h3>Intel Core I7</h3>
+                    <p>Foi introduzido em novembro de 200 8, implementa 4 processador es x86 SMT, cada um  com uma ache L2 dedicada e com uma cache L3 compartilhada.</p>
 
-                <p>Cada  núcleo  tem  sua  cache  L2  dedicada  e  quatro  núcleos  compartilham  a  cache  L3  de  8MB.  Um mecanismo  que  a  Intel  usa  para  tornar  suas  caches  mais  eficientes  é  a  pré-busca,  onde  o  hardware analisa padrões  de acesso  a memória  e tenta preencher as caches de forma especulativa com  dados que provavelmente  serão  resquisitados  logo.  O  chip  CORE  I7   suporta  duas  formas  de  comunicação  externa com outros chips:</p>
+                    <p>Cada  núcleo  tem  sua  cache  L2  dedicada  e  quatro  núcleos  compartilham  a  cache  L3  de  8MB.  Um mecanismo  que  a  Intel  usa  para  tornar  suas  caches  mais  eficientes  é  a  pré-busca,  onde  o  hardware analisa padrões  de acesso  a memória  e tenta preencher as caches de forma especulativa com  dados que provavelmente  serão  resquisitados  logo.  O  chip  CORE  I7   suporta  duas  formas  de  comunicação  externa com outros chips:</p>
 
-                <ul>
-                    <li>O control ador de  memória DDR3:  tra z o c ontrolador d e memória  para memória  principal  DDR para o  chip. A  i nterface  suporta  três  canais  c om  ta manho  de  8  bytes  para  um  barramento  total  de  192  bi ts,  pa ra  uma taxa  de  dados  agregada  de  32GB/s.  Com  o  controlador  de   memória  no  chip,  o  barrament o  frontal  é eliminado.</li>
+                    <ul>
+                        <li>O control ador de  memória DDR3:  tra z o c ontrolador d e memória  para memória  principal  DDR para o  chip. A  i nterface  suporta  três  canais  c om  ta manho  de  8  bytes  para  um  barramento  total  de  192  bi ts,  pa ra  uma taxa  de  dados  agregada  de  32GB/s.  Com  o  controlador  de   memória  no  chip,  o  barrament o  frontal  é eliminado.</li>
 
-                    <li>O  caminho  de  interterconexão  rápida  (QPI  –  quick-path  interconnect)  é  u ma  especificação  de interconexão  elétrica  ponto  a  p onto,  com  coerência  de  cache  pa ra  processadores  e  chipsets  da   Intel.  Ele possibilita comunicação de alta velocidade entre chips de processadores conectados. A ligação QPI opera a  6,4  GT/s  (transferênci as  por  segundo).  A  16  bi ts  por  transferência,  isso  ati nge  até  12,8  GB/s  e  como ligaçãoes QPI envolvem pares bidirecionais dedicados, a largura de banda total é 25,6GB/s.  </li>
-                </ul>
+                        <li>O  caminho  de  interterconexão  rápida  (QPI  –  quick-path  interconnect)  é  u ma  especificação  de interconexão  elétrica  ponto  a  p onto,  com  coerência  de  cache  pa ra  processadores  e  chipsets  da   Intel.  Ele possibilita comunicação de alta velocidade entre chips de processadores conectados. A ligação QPI opera a  6,4  GT/s  (transferênci as  por  segundo).  A  16  bi ts  por  transferência,  isso  ati nge  até  12,8  GB/s  e  como ligaçãoes QPI envolvem pares bidirecionais dedicados, a largura de banda total é 25,6GB/s.  </li>
+                    </ul>
+                </section>
             </section>
         </article>
     </body>
