@@ -463,8 +463,284 @@
                         <li>Uso específicos: Só Endereços ou só dados</li>
                     </ul>
                 </section>
-            </section>
 
+                <section>
+                    <h2>Pipeline</h2>
+                    <p>
+                        Devido as diferentes fases de execução do uma instrução,
+                        busca, decodificação, dados, execução e resultado, terem
+                        tempos diferentes de execução, foi pensado uma
+                        <b>técnica</b> chamada de <b>pipeline.</b>
+                    </p>
+
+                    <p>
+                        Onde se consistia em sobrepor as diversas fases de
+                        execução, de modo, a ganhar performance usando o
+                        processador de forma mais eficiente. Assim quando uma
+                        fase de uma instrução terminava, a mesma fase da próxima
+                        instrução começava a ser executada e isso acontecia em
+                        todas as fases de execução.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Branch penalty</h2>
+                    <p>
+                        A técnica de pipeline tem um sério problema, chamado de
+                        branch penalty, que ocorre quando se executa uma
+                        instrução de mudança de fluxo como o jump ou os próprios
+                        branchs, por isso dada a natureza do pipeline, quando
+                        ele executa essa instrução de jump, várias outras já
+                        estavam em andamento, então caso o jump ocorra, todo o
+                        processamento daquele código será perdido e o efeito
+                        seria o mesmo de executar o código sem o pipeline, onde
+                        uma insstrução ocorre após esperar a outra terminar.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Técnicas para evitar o branch penalty</h2>
+                    <p>
+                        Dado o problema do branch penalty, muitas técnicas foram
+                        desenvolvidas para evitar eles:
+                    </p>
+
+                    <dl>
+                        <dt>Multiplos fluxos</dt>
+                        <dd>
+                            Cria-se um segundo pipeline simultaneo, porém não
+                            havia como prever ou limitar a quantidade de
+                            pipelines simultaneos que teriam que ser criados
+                            durante a execução do programa, fora que não haviam
+                            recursos o suficiente para lidar com eles na época.
+                        </dd>
+
+                        <dt>Prefetch Branch Target</dt>
+                        <dd>
+                            Este método realizava sempre uma pré-busca dos
+                            endereços que os branchs apontavam e com isso quando
+                            chegava na hora de se executar esse branch durante a
+                            execução, não se perdia tempo processando e já
+                            pulava direto, mantendo os beneficios do pipeline,
+                            porém essa estratégia custava muito recurso, só
+                            sendo usada em mainframes.
+                        </dd>
+
+                        <dt>Loop Buffer</dt>
+                        <dd>
+                            Ele criava um buffer dos branchs então caso aquele
+                            branch fosse executado novamente, ele nem o
+                            processava, pois já estava em cache, sendo bem
+                            efetiva em laços de repetição, foi utilizado só pelo
+                            CRAY-1
+                        </dd>
+
+                        <dt>Execução especulativa</dt>
+                        <dd>
+                            O processador tenta adivinhar quando um branch irá
+                            acontecer para evitar o branch penalty, porém quando
+                            a adivinhação erra sofre todo o branch penalty.
+                            Existem duas formas de se usar essa técnica:
+
+                            <ul>
+                                <li>
+                                    <em>Especulação de dados</em>
+                                    <ul>
+                                        <li>
+                                            Address prediction: tenta adivinhar
+                                            em qual posição da memória os dados
+                                            e instruções das dependencias de
+                                            dados estavam armazenados
+                                        </li>
+
+                                        <li>
+                                            Value prediction: Tenta adivinhar se
+                                            o valor está em um registrador ou
+                                            endereço de memória
+                                        </li>
+
+                                        <li>
+                                            Memory renaming: Técnicas que
+                                            procuram comunicar valores já
+                                            armazenados para instruções loads.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <em>Especulação de controle</em>
+                                    <ul>
+                                        <li>
+                                            Branch prediction: Tenta prever se a
+                                            instrução é um branch ou não
+                                        </li>
+                                        <li>
+                                            Eager execution: Se for um branch,
+                                            ele tenta processar os dois fluxos
+                                            ao mesmo tempo e descarta o que não
+                                            acontecer
+                                        </li>
+                                        <li>
+                                            Disjoint eager execution: Variação
+                                            da técnica Eager Execution em que as
+                                            restrições de disponibilidade de
+                                            recursos são levadas em consideração
+                                            para determinação de quais caminhos,
+                                            selecionados de acordo com a
+                                            probabilidade de serem tomados,
+                                            serão executados
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h2>Spectre</h2>
+                    <p>
+                        Quebram a barreira de isolamento entre aplicações.
+                        Potencialmente permitem que uma aplicação maliciosa
+                        ”force” outra aplicação a acessar de forma arbitrária
+                        segmentos de informações em sua memória no momento em
+                        que estão sendo processadas paralelamente, que podem ser
+                        visualizadas, vazando informações. A vulnerabilidade é
+                        baseada em uma falha de design, que explora a técnica de
+                        execução especulativa.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Meltdown</h2>
+                    <p>
+                        Quebra a barreira de isolamento entre aplicação e
+                        sistema operacional. Permite que qualquer aplicação
+                        executada pelo usuário acesse a memória central do
+                        computador. A palavra meltdown significa derreter, em
+                        inglês, em alusão ao fato de que a aplicação pode
+                        ignorar a barreira de segurança do processador, que
+                        impediria o acesso à memória do kernel dos sistemas
+                        operacionais (seja Windows, Linux ou macOS). O kernel
+                        possui acesso a praticamente todos os processos de um
+                        dispositivo.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Tipos de branch prediction</h2>
+                    <dl>
+                        <dt>Predict never taken</dt>
+                        <dd>Assume que nunca é um branch</dd>
+
+                        <dt>Predict always taken</dt>
+                        <dd>Assume que sempre é um branch</dd>
+
+                        <dt>Predict by op code</dt>
+                        <dd>
+                            Usa estatistica para tentar adivinhar se a próxima
+                            instrução é um jump baseado na operação atual, pois
+                            algumas instruções estatisticamente tem mais chance
+                            de serem seguidas de um branch.
+                        </dd>
+
+                        <dt>Taken/Not taken switch</dt>
+                        <dd>É basicamente o eager.</dd>
+
+                        <dt>Delayed branch</dt>
+                        <dd>
+                            Ele identifica se é um branch e para isso ele vai
+                            realocando a ordem de execução do pipeline baseado
+                            nisso.
+                        </dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h2>Superpipeline</h2>
+                    <p>
+                        Técnologia em que se executa um pipeline, em que cada
+                        instrução não demora um ciclo de clock esperando para
+                        executar a próxima, em vez disso ela era executada assim
+                        que a antiga tinha terminado.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Superescalar</h2>
+                    <p>
+                        Se começa a pensar em paralelismo, onde um pipeline
+                        executava duas instruções ao mesmo tempo, tendo a
+                        sobreposição e o paralelismo.
+                    </p>
+
+                    <h3>Limitações</h3>
+                    <ul>
+                        <li>Dependência de dados verdadeira</li>
+                        <li>Dependência de desvio</li>
+                        <li>Conflito de recurso</li>
+                        <li>Dependência de saída</li>
+                        <li>Antidependência</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Dependência de dados verdadeira</h2>
+                    <p>
+                        A segunda instrução espera a 1° pois depende do
+                        resultado da execução dela.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Dependência de desvio</h2>
+                    <p>
+                        Uma instrução seguinte a uma instrução de desvio
+                        condicional não pode ser executada até que seja
+                        completada a execução da instrução de desvio
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Conflito de recurso</h2>
+                    <p>
+                        Duas instruções tentam acessar o mesmo recurso (pode ser
+                        um endereço de memória por exemplo) ao mesmo tempo.
+                    </p>
+
+                    <h3>Exemplos de recursos</h3>
+                    <ul>
+                        <li>Caches</li>
+                        <li>Barramentos</li>
+                        <li>Registradores</li>
+                        <li>
+                            Unidades funcionais (O somador da ULA, por exemplo)
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Políticas de iniciação de instruções</h2>
+                    <h3>Tipos de políticas usadas</h3>
+                    <ul>
+                        <li>
+                            Iniciação em ordem com terminação em ordem
+                        </li>
+                        <li>
+                            Iniciação em ordem com terminação fora de ordem
+                        </li>
+                        <li>
+                            Iniciação fora de ordem com terminação fora de ordem
+                        </li>
+                    </ul>
+
+                    <p>
+                        A única restrição é a de que o resultado da execução
+                        deve ser igual ao resultado que seria obtido com a
+                        execução seqüencial
+                    </p>
+                </section>
+            </section>
+            
             <section id=respostas class="section">
                 <h2>Respostas</h2>
                 <p>Aqui se encontram as respostas formatadas, encontradas na internet para as perguntas do arquivo <mark>Revisao_para_P2.txt</mark></p>
@@ -906,6 +1182,7 @@
                     </ul>
                 </section>
             </section>
+            
         </article>
     </body>
 </html>
